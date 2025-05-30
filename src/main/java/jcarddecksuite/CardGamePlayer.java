@@ -122,7 +122,7 @@ public abstract class CardGamePlayer {
 
     public void removePlayerFromGame() {
         // Remove player from all game collections
-        Configuration config = Configuration.getInstance();
+        Configuration<CardGamePlayer> config = Configuration.getInstance();
         config.getPlayers().remove(this);
         duplicateCardPlayed.remove(this);
         

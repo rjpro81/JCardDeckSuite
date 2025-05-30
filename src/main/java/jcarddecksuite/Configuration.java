@@ -5,17 +5,17 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
-
-
 /**
  * Manages game configuration and player state.
+ * @param <T> The type of player that can be added to this configuration
  */
-public class Configuration {
-    private static final int MAX_PLAYERS = 4;
-    private final List<CardGamePlayer> listOfCardGamePlayers = new CopyOnWriteArrayList<>();
+public class Configuration<T extends CardGamePlayer> {
+    public static final int MAX_PLAYERS = 4;
+    private final List<T> players = new CopyOnWriteArrayList<>();
     private int gameId;
     private static final Object lock = new Object();
-    private static volatile Configuration instance;
+    
+    private static volatile Configuration<?> instance;
 
     /**
      * Gets the maximum number of players allowed in a game.
@@ -44,7 +44,7 @@ public class Configuration {
     /**
      * Private constructor to prevent instantiation.
      */
-    private Configuration() {
+    protected Configuration() {
         initialize();
     }
 
@@ -53,32 +53,34 @@ public class Configuration {
      */
     private void initialize() {
         synchronized (lock) {
-            listOfCardGamePlayers.clear();
+            players.clear();
             gameId = ThreadLocalRandom.current().nextInt(1000000);
         }
     }
 
     /**
      * Gets the singleton instance of Configuration.
+     * @param <T> The type of player for this configuration instance
      * @return The Configuration instance
      */
-    public static Configuration getInstance() {
+    @SuppressWarnings("unchecked")
+    public static <T extends CardGamePlayer> Configuration<T> getInstance() {
         if (instance == null) {
-            synchronized (Configuration.class) {
+            synchronized (lock) {
                 if (instance == null) {
-                    instance = new Configuration();
+                    instance = new Configuration<>();
                 }
             }
         }
-        return instance;
+        return (Configuration<T>) instance;
     }
 
     /**
      * Gets an unmodifiable list of players in the game.
      * @return List of players
      */
-    public List<CardGamePlayer> getPlayers() {
-        return Collections.unmodifiableList(listOfCardGamePlayers);
+    public List<T> getPlayers() {
+        return Collections.unmodifiableList(players);
     }
 
     /**
@@ -86,39 +88,53 @@ public class Configuration {
      * @param player The player to add
      * @return true if player was added, false if game is full
      */
-    public boolean addPlayer(CardGamePlayer player) {
+    public boolean addPlayer(T player) {
         if (player == null) {
             throw new IllegalArgumentException("Player cannot be null");
         }
         synchronized (lock) {
-            if (listOfCardGamePlayers.size() < MAX_PLAYERS) {
-                listOfCardGamePlayers.add(player);
-                return true;
+            if (players.size() >= MAX_PLAYERS) {
+                return false;
             }
-            return false;
+            players.add(player);
+            return true;
         }
     }
 
     /**
      * Removes a player from the game.
      * @param player The player to remove
-     * @return true if player was removed, false if not found
+     * @return true if player was removed, false if player was not in game
      */
-    public boolean removePlayer(CardGamePlayer player) {
-        if (player == null) {
-            return false;
-        }
+    public boolean removePlayer(T player) {
         synchronized (lock) {
-            return listOfCardGamePlayers.remove(player);
+            return players.remove(player);
         }
     }
 
     /**
-     * Clears all players from the game.
+     * Checks if the game is full.
+     * @return true if game is full, false otherwise
      */
-    public void clearPlayers() {
+    public boolean isGameFull() {
+        return players.size() >= MAX_PLAYERS;
+    }
+
+    /**
+     * Gets the number of players currently in the game.
+     * @return Number of players
+     */
+    public int getPlayerCount() {
+        return players.size();
+    }
+
+    /**
+     * Resets the configuration to its initial state.
+     */
+    public void reset() {
         synchronized (lock) {
-            listOfCardGamePlayers.clear();
+            players.clear();
+            gameId = ThreadLocalRandom.current().nextInt(1000000);
         }
     }
 }
