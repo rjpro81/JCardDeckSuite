@@ -1,56 +1,74 @@
 package jcarddecksuite;
 
 import java.util.List;
-import java.util.Arrays;
 
+/**
+ * Represents a standard French-suited deck of 52 playing cards.
+ */
 public class FrenchSuitDeck extends Deck {
-    private static final String[] ranks = { "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A" };
-    public enum suits { DIAMOND, HEART, SPADE, CLOVES }
-    private final PlayingCard[] cardDeck = new PlayingCard[52];
+    /**
+     * Standard ranks for a French-suited deck.
+     */
+    public static final String[] RANKS = {
+        "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"
+    };
 
-    public FrenchSuitDeck(){
+    /**
+     * Standard suits for a French-suited deck.
+     */
+    public enum Suit {
+        DIAMOND, HEART, SPADE, CLUB
+    }
+
+    /**
+     * Creates a new French-suited deck.
+     */
+    public FrenchSuitDeck() {
+        super(52); // Call superclass constructor with number of cards
         createCardDeck();
     }
-    protected void createCardDeck(){
-        int i = 0;
-        for(suits suit : suits.values()){
-            for (String rank : ranks){
-                cardDeck[i] = new PlayingCard(suit, rank);
-                i++;
+
+    @Override
+    protected void createCardDeck() {
+        int index = 0;
+        for (Suit suit : Suit.values()) {
+            for (String rank : RANKS) {
+                super.getPlayingCardDeck()[index++] = new PlayingCard(suit, rank);
             }
         }
     }
 
-    public void shuffleDeck() {
-        PlayingCard[] tempDeck = Arrays.copyOf(cardDeck, cardDeck.length);
-        for (int i = 0; i < cardDeck.length; i++) {
-            int randomIndex = (int) (Math.random() * cardDeck.length);
-            cardDeck[i] = tempDeck[randomIndex];
+    @Override
+    public PlayingCard[] getPlayingCardDeck() {
+        return super.getPlayingCardDeck();
+    }
+
+    @Override
+    public void divideDeck(List<? extends CardGamePlayer> players) {
+        if (players == null || players.isEmpty()) {
+            throw new IllegalArgumentException("Player list cannot be null or empty");
         }
-    }
-
-    public void divideDeck(List<? extends CardGamePlayer> listOfWarPlayers){
-      int numberOfCardsPerPlayer = 0;
-      if(cardDeck.length == 52) {
-        numberOfCardsPerPlayer = (cardDeck.length / listOfWarPlayers.size());
-
-        // Shuffle the deck before dividing
-        shuffleDeck();
-
-        for (int player = 0; player < listOfWarPlayers.size(); player++) {
-          int card = player;
-          for (; card < cardDeck.length; card = card + listOfWarPlayers.size()) {
-            listOfWarPlayers.get(player).addCardToTopOfDeck(cardDeck[card]);
-          }
+        
+        if (super.getPlayingCardDeck() == null || super.getPlayingCardDeck().length != 52) {
+            throw new IllegalStateException("Deck must contain exactly 52 cards");
         }
-      }
+
+        super.divideDeck(players);
     }
 
-    public static String[] getRanks(){
-      return ranks;
+    /**
+     * Gets the standard ranks for a French-suited deck.
+     * @return Array of rank strings
+     */
+    public static String[] getRanks() {
+        return RANKS.clone(); // Return a defensive copy
     }
 
-    public PlayingCard[] getPlayingCardDeck(){
-        return cardDeck;
+    /**
+     * Gets the standard suits for a French-suited deck.
+     * @return Array of suit values
+     */
+    public static Suit[] getSuits() {
+        return Suit.values().clone(); // Return a defensive copy
     }
 }

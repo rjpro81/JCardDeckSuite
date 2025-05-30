@@ -49,6 +49,10 @@ public abstract class CardGamePlayer {
         duplicateCardPlayed.clear();
     }
 
+    public static List<CardGamePlayer> getDuplicateCardPlayed() {
+        return duplicateCardPlayed;
+    }
+
     public PlayingCard getPlayingCard() {
         return playingCard;
     }
