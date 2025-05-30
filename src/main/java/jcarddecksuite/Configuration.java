@@ -4,9 +4,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+
+
 public class Configuration {
   private static final int MAX_PLAYERS = 4;
-  private final List<WarPlayer> listOfWarPlayers = new CopyOnWriteArrayList<>();
+  private final List<CardGamePlayer> listOfCardGamePlayers = new CopyOnWriteArrayList<>();
   private int gameId;
 
   public int getGameId() {
@@ -23,7 +25,7 @@ public class Configuration {
   }
 
   private void initialize() {
-    listOfWarPlayers.clear();
+    listOfCardGamePlayers.clear();
     gameId = new java.util.Random().nextInt(1000000);
   }
 
@@ -38,17 +40,17 @@ public class Configuration {
     return instance;
   }
 
-  public List<WarPlayer> getPlayers() {
-    return Collections.unmodifiableList(listOfWarPlayers);
+  public List<CardGamePlayer> getPlayers() {
+    return Collections.unmodifiableList(listOfCardGamePlayers);
   }
 
-  public void addPlayer(WarPlayer player) {
-    if (listOfWarPlayers.size() < MAX_PLAYERS) {
-      listOfWarPlayers.add(player);
+  public void addPlayer(CardGamePlayer player) {
+    if (listOfCardGamePlayers.size() < MAX_PLAYERS) {
+      listOfCardGamePlayers.add(player);
     }
   }
 
-  public void removePlayer(WarPlayer player) {
-    listOfWarPlayers.remove(player);
+  public void removePlayer(CardGamePlayer player) {
+    listOfCardGamePlayers.remove(player);
   }
 }
