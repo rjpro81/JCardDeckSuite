@@ -3,3 +3,25 @@
 
 # Ignore Gradle build output directory
 build
+
+# OS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Maven
+.target/
+*.log
+!logback-test.xml
+!logback.xml
+
+# Java
+*.class
+*.log
+!logback-test.xml
+!logback.xml
