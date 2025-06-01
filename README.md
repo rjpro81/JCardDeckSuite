@@ -42,7 +42,7 @@ PlayingCard card = deck.draw();
 
 ## License
 
-[Insert license information here]
+GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
 
 ## Contributing
 
@@ -54,4 +54,5 @@ PlayingCard card = deck.draw();
 
 ## Contact
 
-[Insert contact information here]
+Elimu LLC
+rjulsaint@elimullc.com
